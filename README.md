@@ -1,0 +1,2 @@
+# Toty
+The repository is a Netbeans Java project which has a client which connects to a remote server and logs in. The connection is done through socket programming. The password is encrypted using Jasypt and uses SHA-1 encryption. A file can be encrypted and uploaded. The file encryption uses Attribute based Encryption. The file is then divided and different parts are stored in different user's computer. This creates a p2p network. 
