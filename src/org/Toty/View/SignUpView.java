@@ -7,6 +7,7 @@ import java.net.Socket;
 import org.Toty.common.Encryptor;
 import org.Toty.common.Login;
 import org.Toty.common.Packet;
+import org.Toty.common.User;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
@@ -45,7 +46,7 @@ public class SignUpView extends javax.swing.JFrame {
         nationalityComboBox = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
         roleComboBox = new javax.swing.JComboBox<>();
-        jTextField1 = new javax.swing.JTextField();
+        teamTextField = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         branchComboBox = new javax.swing.JComboBox<>();
@@ -92,9 +93,9 @@ public class SignUpView extends javax.swing.JFrame {
 
         roleComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Associate Developer", "Developer", "Project Manager", "Humar Resources", "Sales" }));
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        teamTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                teamTextFieldActionPerformed(evt);
             }
         });
 
@@ -141,7 +142,7 @@ public class SignUpView extends javax.swing.JFrame {
                                     .addComponent(branchComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(teamTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(goButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -177,7 +178,7 @@ public class SignUpView extends javax.swing.JFrame {
                     .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(teamTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -208,14 +209,15 @@ public class SignUpView extends javax.swing.JFrame {
         String username=usernameTextField.getText();
         String password=new String(passwordTextField.getPassword());
         String confirmPassword=new String(confirmPasswordTextField.getPassword());
-        if(password.equals(confirmPassword)){
+        if(passwordTextField.getText().equals("") || confirmPasswordTextField.getText().equals("") || usernameTextField.getText().equals("") || teamTextField.getText().equals("")){
+            notifyLabel.setText("Check all Entries");
+        }
+        else if(password.equals(confirmPassword)){
             try{
                 ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
                 DataInputStream in=new DataInputStream(socket.getInputStream());
                 password=new Encryptor(password).run();
-                Login login=new Login(username,password);
-                byte b=2;
-                Packet packet=new Packet(b,login);
+                Packet packet=new Packet((byte)2,generateUser(password));
                 out.writeObject(packet);
                 String result=in.readUTF();
                 if(result.equals("true")){
@@ -242,6 +244,15 @@ public class SignUpView extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_goButtonActionPerformed
 
+    public User generateUser(String password){
+        User user=new User(usernameTextField.getText(),password);
+        user.addAttribute("Nationality",nationalityComboBox.getSelectedItem().toString());
+        user.addAttribute("Role",roleComboBox.getSelectedItem().toString());
+        user.addAttribute("Team",teamTextField.getText());
+        user.addAttribute("Branch",branchComboBox.getSelectedItem().toString());
+        return user;
+    }
+    
     private void usernameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_usernameTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_usernameTextFieldActionPerformed
@@ -250,9 +261,9 @@ public class SignUpView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_nationalityComboBoxActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void teamTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_teamTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_teamTextFieldActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         new LoginView().setVisible(true);
@@ -309,11 +320,11 @@ public class SignUpView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JComboBox<String> nationalityComboBox;
     private javax.swing.JLabel notifyLabel;
     private javax.swing.JPasswordField passwordTextField;
     private javax.swing.JComboBox<String> roleComboBox;
+    private javax.swing.JTextField teamTextField;
     private javax.swing.JTextField usernameTextField;
     // End of variables declaration//GEN-END:variables
 }
