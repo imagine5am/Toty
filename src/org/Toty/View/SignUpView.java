@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import org.Toty.common.Encryptor;
 import org.Toty.common.Login;
 import org.Toty.common.Packet;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
@@ -209,18 +210,15 @@ public class SignUpView extends javax.swing.JFrame {
         String confirmPassword=new String(confirmPasswordTextField.getPassword());
         if(password.equals(confirmPassword)){
             try{
-            ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
-            DataInputStream in=new DataInputStream(socket.getInputStream());
-            ConfigurablePasswordEncryptor passwordEncryptor=new ConfigurablePasswordEncryptor();
-            passwordEncryptor.setAlgorithm("SHA-1");
-            passwordEncryptor.setPlainDigest(true);
-            password=passwordEncryptor.encryptPassword(password);
-            Login login=new Login(username,password);
-            byte b=2;
-            Packet packet=new Packet(b,login);
-            out.writeObject(packet);
-            String result=in.readUTF();
-            if(result.equals("true")){
+                ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
+                DataInputStream in=new DataInputStream(socket.getInputStream());
+                password=new Encryptor(password).run();
+                Login login=new Login(username,password);
+                byte b=2;
+                Packet packet=new Packet(b,login);
+                out.writeObject(packet);
+                String result=in.readUTF();
+                if(result.equals("true")){
                 LoginView z=new LoginView();
                 this.setVisible(false);
                 z.setVisible(true);
@@ -228,8 +226,8 @@ public class SignUpView extends javax.swing.JFrame {
             }
             else{
                 notifyLabel.setText("Username Exists");
-                passwordTextField.setText("");
-                confirmPasswordTextField.setText("");
+                //passwordTextField.setText("");
+                //confirmPasswordTextField.setText("");
             }
             out.close();
             in.close();

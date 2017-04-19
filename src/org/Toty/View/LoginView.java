@@ -6,9 +6,9 @@
 package org.Toty.View;
 import java.net.*;
 import java.io.*;
-import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 import org.Toty.common.*;
+import org.jasypt.digest.PooledStringDigester;
 /**
  *
  * @author Shivam Sood
@@ -135,13 +135,9 @@ public class LoginView extends javax.swing.JFrame {
         try{
             out=new ObjectOutputStream(socket.getOutputStream());
             in=new DataInputStream(socket.getInputStream());
-            ConfigurablePasswordEncryptor passwordEncryptor=new ConfigurablePasswordEncryptor();
-            passwordEncryptor.setAlgorithm("SHA-1");
-            passwordEncryptor.setPlainDigest(true);
             String username=userNameTextField.getText();
             String password=new String(passwordTextField.getPassword());
-            System.out.println(password);
-            password=passwordEncryptor.encryptPassword(password);
+            password=new Encryptor(password).run();
             Login login=new Login(username,password);
             byte b=1;
             Packet packet=new Packet(b,login);
