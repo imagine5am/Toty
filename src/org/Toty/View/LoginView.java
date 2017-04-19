@@ -168,13 +168,8 @@ public class LoginView extends javax.swing.JFrame {
 
     private void SignUpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SignUpButtonActionPerformed
         new SignUpView().setVisible(true);
-        try{
-        socket.close();
+        //socket.close();
         dispose();
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
     }//GEN-LAST:event_SignUpButtonActionPerformed
 
     /**
@@ -215,6 +210,7 @@ public class LoginView extends javax.swing.JFrame {
     public void finalize(){
         try{
             socket.close();
+            System.out.println("Socket Closed\n");
         }
         catch(IOException e){
             e.printStackTrace();
