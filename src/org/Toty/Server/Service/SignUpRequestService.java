@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import org.Toty.Commons.Login;
+import org.Toty.Commons.User;
 
 /**
  *
@@ -25,12 +25,12 @@ public class SignUpRequestService {
         }
     }
     
-    public boolean check(Login login){
+    public boolean check(User user){
         try{
             Statement statement=connection.createStatement();
-            ResultSet rs=statement.executeQuery("select * from login where username='"+login.getUsername()+"' and password='"+login.getPassword()+"';");
+            ResultSet rs=statement.executeQuery("select * from request where username='"+user.getUsername()+"' and password='"+user.getPassword()+"';");
             if(rs.next()){
-                if(rs.getString("username").equals(login.getUsername()) && rs.getString("password").equals(login.getPassword())){
+                if(rs.getString("username").equals(user.getUsername()) && rs.getString("password").equals(user.getPassword())){
                     return true;
                 }
                 else{
@@ -47,11 +47,11 @@ public class SignUpRequestService {
         return true;
     }
     
-    public boolean remove(Login login){
-        if(check(login)){
+    public boolean remove(User user){
+        if(check(user)){
             try{
                 Statement statement=connection.createStatement();
-                int result=statement.executeUpdate("delete from login where username='"+login.getUsername()+"';");
+                int result=statement.executeUpdate("delete from request where username='"+user.getUsername()+"';");
                 if(result>0)
                     return true;
                 else
@@ -64,10 +64,12 @@ public class SignUpRequestService {
         return false;
     }
     
-    public boolean add(Login login){
+    public boolean add(User user){
         try{
         Statement statement=connection.createStatement();
-        int result=statement.executeUpdate("insert into login values(\""+login.getUsername()+"\",\""+login.getPassword()+"\");");
+        int result=statement.executeUpdate("insert into request values('"+user.getUsername()+"','"
+                +user.getPassword()+"','"+user.getAttribute("Nationality")+"','"+user.getAttribute("Role")
+                +"','"+user.getAttribute("Team")+"','"+user.getAttribute("Branch")+"');");
         if(result>0)
             return true;
         else
