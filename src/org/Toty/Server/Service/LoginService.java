@@ -8,19 +8,22 @@ import org.Toty.Commons.Login;
  * @author Shivam Sood
  */
 public class LoginService {
-    private static Connection connection;
-    static{
+    
+    private Connection connection;
+        
+    public LoginService(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
             String username=new String("root");
             String password=new String("root");
-            LoginService.connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/toty",username,password);
+            connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/toty",username,password);
         }
         catch(Exception e){
             e.printStackTrace();
         }
     }
-    public static boolean check(Login login){
+    
+    public boolean check(Login login){
         try{
             Statement statement=connection.createStatement();
             ResultSet rs=statement.executeQuery("select * from login where username='"+login.getUsername()+"' and password='"+login.getPassword()+"';");
@@ -41,7 +44,8 @@ public class LoginService {
         }
         return true;
     }
-    public static boolean remove(Login login){
+    
+    public boolean remove(Login login){
         if(check(login)){
             try{
                 Statement statement=connection.createStatement();
@@ -57,7 +61,8 @@ public class LoginService {
         }
         return false;
     }
-    public static boolean add(Login login){
+    
+    public boolean add(Login login){
         try{
         Statement statement=connection.createStatement();
         int result=statement.executeUpdate("insert into login values(\""+login.getUsername()+"\",\""+login.getPassword()+"\");");

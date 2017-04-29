@@ -7,7 +7,6 @@ import org.Toty.Commons.Packet;
 import java.net.*;
 import java.util.*;
 import java.io.*;
-//import org.Toty.common.*;
 
 /**
  *
@@ -30,7 +29,8 @@ public class ServerThread extends Thread {
             if(byteCode==1){
                 Login login=(Login)packet.getObject();
                 DataOutputStream out=new DataOutputStream(socket.getOutputStream());
-                boolean result=LoginService.check(login);
+                LoginService loginService=new LoginService();
+                boolean result=loginService.check(login);
                 if(result){
                     out.writeUTF(new String("true"));
                 }
