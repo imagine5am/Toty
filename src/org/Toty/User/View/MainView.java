@@ -1,4 +1,4 @@
-package org.Toty.View;
+package org.Toty.User.View;
 
 import java.io.IOException;
 

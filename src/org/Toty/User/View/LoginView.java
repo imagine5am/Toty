@@ -1,8 +1,11 @@
-package org.Toty.View;
+package org.Toty.User.View;
+
+import org.Toty.Commons.Encryptor;
+import org.Toty.Commons.Packet;
+import org.Toty.Commons.Login;
 import java.net.*;
 import java.io.*;
 
-import org.Toty.common.*;
 import org.jasypt.digest.PooledStringDigester;
 /**
  *
@@ -188,6 +191,8 @@ public class LoginView extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(LoginView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

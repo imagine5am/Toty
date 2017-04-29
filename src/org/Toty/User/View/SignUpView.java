@@ -1,13 +1,13 @@
-package org.Toty.View;
+package org.Toty.User.View;
 
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import org.Toty.common.Encryptor;
-import org.Toty.common.Login;
-import org.Toty.common.Packet;
-import org.Toty.common.User;
+import org.Toty.Commons.Encryptor;
+import org.Toty.Commons.Login;
+import org.Toty.Commons.Packet;
+import org.Toty.Commons.User;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
@@ -295,6 +295,8 @@ public class SignUpView extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(SignUpView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 

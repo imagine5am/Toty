@@ -1,9 +1,10 @@
 package org.Toty.Example;
 
+import org.Toty.Commons.Packet;
+import org.Toty.Commons.Login;
 import java.net.*;
 import java.io.*;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
-import org.Toty.common.*;
 
 /**
  *
