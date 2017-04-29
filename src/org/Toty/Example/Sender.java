@@ -1,4 +1,4 @@
-package org.Toty.Sender;
+package org.Toty.Example;
 
 import java.net.*;
 import java.io.*;

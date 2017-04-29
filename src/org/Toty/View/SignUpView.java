@@ -209,7 +209,7 @@ public class SignUpView extends javax.swing.JFrame {
         String username=usernameTextField.getText();
         String password=new String(passwordTextField.getPassword());
         String confirmPassword=new String(confirmPasswordTextField.getPassword());
-        if(passwordTextField.getText().equals("") || confirmPasswordTextField.getText().equals("") || usernameTextField.getText().equals("") || teamTextField.getText().equals("")){
+        if(passwordTextField.getText().trim().equals("") || confirmPasswordTextField.getText().trim().equals("") || usernameTextField.getText().trim().equals("") || teamTextField.getText().trim().equals("")){
             notifyLabel.setText("Check all Entries");
         }
         else if(password.equals(confirmPassword)){
@@ -245,9 +245,9 @@ public class SignUpView extends javax.swing.JFrame {
     }//GEN-LAST:event_goButtonActionPerformed
 
     public User generateUser(String password){
-        User user=new User(usernameTextField.getText(),password);
+        User user=new User(usernameTextField.getText().trim(),password);
         user.addAttribute("Nationality",nationalityComboBox.getSelectedItem().toString());
-        user.addAttribute("Role",roleComboBox.getSelectedItem().toString());
+        user.addAttribute("Role",roleComboBox.getSelectedItem().toString().trim());
         user.addAttribute("Team",teamTextField.getText());
         user.addAttribute("Branch",branchComboBox.getSelectedItem().toString());
         return user;
