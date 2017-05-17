@@ -21,8 +21,7 @@ public class SignUpView extends javax.swing.JFrame {
         initComponents();
         try{
             this.socket=new Socket("localhost",1234);
-        }
-        catch(IOException e){
+        }catch(IOException e){
             e.printStackTrace();
             notifyLabel.setText("Network Error");
         }
@@ -222,16 +221,16 @@ public class SignUpView extends javax.swing.JFrame {
                 out.writeObject(packet);
                 String result=in.readUTF();
                 if(result.equals("true")){
-                LoginView z=new LoginView();
-                this.setVisible(false);
-                z.setVisible(true);
-                dispose();
-            }
-            else{
-                notifyLabel.setText("Username Exists");
-                //passwordTextField.setText("");
-                //confirmPasswordTextField.setText("");
-            }
+                    LoginView z=new LoginView();
+                    this.setVisible(false);
+                    z.setVisible(true);
+                    dispose();
+                }
+                else{
+                    notifyLabel.setText("Username Exists");
+                    //passwordTextField.setText("");
+                    //confirmPasswordTextField.setText("");
+                }
             out.close();
             in.close();
         }
