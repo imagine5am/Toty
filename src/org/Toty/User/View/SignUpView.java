@@ -217,6 +217,7 @@ public class SignUpView extends javax.swing.JFrame {
                 ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
                 DataInputStream in=new DataInputStream(socket.getInputStream());
                 password=new Encryptor(password).run();
+                System.out.println(password);
                 Packet packet=new Packet((byte)2,generateUser(password));
                 out.writeObject(packet);
                 String result=in.readUTF();

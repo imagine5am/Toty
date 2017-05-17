@@ -1,26 +1,26 @@
-package org.Toty.Example;
+package org.Toty.Administrator.View;
 
-import org.Toty.Commons.Packet;
-import org.Toty.Commons.Login;
-import java.net.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 import org.Toty.Commons.Encryptor;
+import org.Toty.Commons.Login;
+import org.Toty.Commons.Packet;
 import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
  *
  * @author Shivam Sood
  */
-public class Sender {
+public class CreateAdmin {
     public static void main(String args[]) throws Exception{
         Socket socket=new Socket("localhost",1234);
-        System.out.println("___DO NOT USE THiS___");
+        System.out.println("___USE THiS___");
         ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
         DataInputStream in=new DataInputStream(socket.getInputStream());
         BufferedReader br=new BufferedReader(new InputStreamReader(System.in));
-        ConfigurablePasswordEncryptor passwordEncryptor=new ConfigurablePasswordEncryptor();
-        passwordEncryptor.setAlgorithm("SHA-1");
-        passwordEncryptor.setPlainDigest(true);
         System.out.println("Enter username");
         String username=br.readLine();
         System.out.println("Enter password");

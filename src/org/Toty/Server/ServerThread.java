@@ -1,8 +1,11 @@
 package org.Toty.Server;
 
 import org.Toty.Server.Service.LoginService;
+import org.Toty.Server.Service.AdminLoginService;
 import org.Toty.Commons.Login;
 import org.Toty.Commons.Packet;
+import org.Toty.Commons.User;
+import org.Toty.Server.Service.SignUpRequestService;
 
 import java.net.*;
 import java.util.*;
@@ -40,9 +43,41 @@ public class ServerThread extends Thread {
                 out.close();
             }
             else if(byteCode==2){
-                Login login=(Login)packet.getObject();
+                User user=(User)packet.getObject();
+                System.out.println("Data User check");
+                System.out.println("Username: "+user.getUsername()+" Password: "+user.getPassword());
                 DataOutputStream out=new DataOutputStream(socket.getOutputStream());
-                boolean result=LoginService.add(login);
+                SignUpRequestService signUpService=new SignUpRequestService();
+                boolean result=signUpService.add(user);
+                if(result){
+                    out.writeUTF(new String("true"));
+                }
+                else{
+                    out.writeUTF(new String("false"));
+                }
+                out.close();
+            }
+            else if(byteCode==3){
+                Login login=(Login)packet.getObject();
+                System.out.println("Data Admin check");
+                System.out.println("Username: "+login.getUsername()+" Password: "+login.getPassword());
+                DataOutputStream out=new DataOutputStream(socket.getOutputStream());
+                AdminLoginService loginService=new AdminLoginService();
+                boolean result=loginService.check(login);
+                if(result){
+                    out.writeUTF(new String("true"));
+                }
+                else{
+                    out.writeUTF(new String("false"));
+                }
+            }
+            else if(byteCode==4){
+                Login login=(Login)packet.getObject();
+                System.out.println("Data Admin add");
+                System.out.println("Username: "+login.getUsername()+" Password: "+login.getPassword());
+                DataOutputStream out=new DataOutputStream(socket.getOutputStream());
+                AdminLoginService loginService=new AdminLoginService();
+                boolean result=loginService.add(login);
                 if(result){
                     out.writeUTF(new String("true"));
                 }

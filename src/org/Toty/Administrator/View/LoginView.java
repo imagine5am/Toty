@@ -120,9 +120,12 @@ public class LoginView extends javax.swing.JFrame {
             in=new DataInputStream(socket.getInputStream());
             String username=userNameTextField.getText();
             String password=new String(passwordTextField.getPassword());
+            System.out.println("Data Entered: "+username+" "+password);
             password=new Encryptor(password).run();
+            System.out.println("Username: "+username);
+            System.out.println("Password: "+password);
             Login login=new Login(username,password);
-            byte b=1;
+            byte b=3;
             Packet packet=new Packet(b,login);
             out.writeObject(packet);
             String result=in.readUTF();

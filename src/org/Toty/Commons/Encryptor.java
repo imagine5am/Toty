@@ -1,6 +1,6 @@
 package org.Toty.Commons;
 
-import org.jasypt.digest.PooledStringDigester;
+import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
  *
@@ -14,12 +14,11 @@ public class Encryptor {
     public String run(){
         try{
             password=new String(password.getBytes("UTF-8"));
-            PooledStringDigester passwordEncryptor = new PooledStringDigester();
+            ConfigurablePasswordEncryptor passwordEncryptor = new ConfigurablePasswordEncryptor();
             passwordEncryptor.setAlgorithm("SHA-1");
-            passwordEncryptor.setPoolSize(4);
-            passwordEncryptor.setIterations(50000);
-            password=passwordEncryptor.digest(password);
-            return password;
+            passwordEncryptor.setPlainDigest(true);
+            String encryptedPassword = passwordEncryptor.encryptPassword(password);
+            return encryptedPassword;
         }catch(Exception e){
             e.printStackTrace();
         }

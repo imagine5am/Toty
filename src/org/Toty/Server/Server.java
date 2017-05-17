@@ -11,6 +11,7 @@ import java.net.*;
 public class Server {
     private ServerSocket serverSocket;
     public Server(){
+        System.out.println("Server Started");
         try{
             this.serverSocket=new ServerSocket(1234);
         }

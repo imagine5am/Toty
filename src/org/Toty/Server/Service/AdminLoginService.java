@@ -4,33 +4,33 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import org.Toty.Commons.User;
+import org.Toty.Commons.Login;
 
 /**
  *
  * @author Shivam Sood
  */
-public class SignUpRequestService {
+public class AdminLoginService {
+    
     private Connection connection;
         
-    public SignUpRequestService(){
+    public AdminLoginService(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
             String username=new String("root");
             String password=new String("root");
-            connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/toty",username,password);
-        }
-        catch(Exception e){
+            connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/totyadmin",username,password);
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
     
-    public boolean check(User user){
+    public boolean check(Login login){
         try{
             Statement statement=connection.createStatement();
-            ResultSet rs=statement.executeQuery("select * from request where username='"+user.getUsername()+"' and password='"+user.getPassword()+"';");
+            ResultSet rs=statement.executeQuery("select * from login where username='"+login.getUsername()+"' and password='"+login.getPassword()+"';");
             if(rs.next()){
-                if(rs.getString("username").equals(user.getUsername()) && rs.getString("password").equals(user.getPassword())){
+                if(rs.getString("username").equals(login.getUsername()) && rs.getString("password").equals(login.getPassword())){
                     return true;
                 }
                 else{
@@ -40,37 +40,32 @@ public class SignUpRequestService {
             else{
                 return false;
             }
-        }
-        catch(Exception e){
+        }catch(Exception e){
             e.printStackTrace();
         }
         return true;
     }
     
-    public boolean remove(User user){
-        if(check(user)){
+    public boolean remove(Login login){
+        if(check(login)){
             try{
                 Statement statement=connection.createStatement();
-                int result=statement.executeUpdate("delete from request where username='"+user.getUsername()+"';");
+                int result=statement.executeUpdate("delete from login where username='"+login.getUsername()+"';");
                 if(result>0)
                     return true;
                 else
                     return false;
-            }
-            catch(Exception e){
+            }catch(Exception e){
                 e.printStackTrace();
             }
         }
         return false;
     }
     
-    public boolean add(User user){
+    public boolean add(Login login){
         try{
         Statement statement=connection.createStatement();
-        int result=statement.executeUpdate("insert into request values('"+user.getUsername()+"','"
-                +user.getPassword()+"','"+user.getAttribute("Nationality")+"','"+user.getAttribute("Role")
-                +"','"+user.getAttribute("Team")+"','"+user.getAttribute("Branch")+"');");
-        System.out.println(statement);
+        int result=statement.executeUpdate("insert into login values(\""+login.getUsername()+"\",\""+login.getPassword()+"\");");
         if(result>0)
             return true;
         else

@@ -32,4 +32,6 @@ public class Packet implements Serializable {
 Code    Object
 1       login
 2       add
+3       admin login
+4       admin add
 */
