@@ -65,6 +65,8 @@ public class ServerThread extends Thread {
                 AdminLoginService loginService=new AdminLoginService();
                 boolean result=loginService.check(login);
                 if(result){
+                    SignUpRequestService signUpService=new SignUpRequestService();
+                    //Packet packet=new Packet((byte)101,(Object)signUpService.getAllRequests);
                     out.writeUTF(new String("true"));
                 }
                 else{

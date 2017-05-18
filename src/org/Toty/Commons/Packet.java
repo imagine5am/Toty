@@ -34,4 +34,6 @@ Code    Object
 2       add
 3       admin login
 4       admin add
+101     All Requests Reply
+404     Login Failed     
 */

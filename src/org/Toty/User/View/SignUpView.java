@@ -246,10 +246,10 @@ public class SignUpView extends javax.swing.JFrame {
 
     public User generateUser(String password){
         User user=new User(usernameTextField.getText().trim(),password);
-        user.addAttribute("Nationality",nationalityComboBox.getSelectedItem().toString());
-        user.addAttribute("Role",roleComboBox.getSelectedItem().toString().trim());
-        user.addAttribute("Team",teamTextField.getText());
-        user.addAttribute("Branch",branchComboBox.getSelectedItem().toString());
+        user.addAttribute("nationality",nationalityComboBox.getSelectedItem().toString());
+        user.addAttribute("role",roleComboBox.getSelectedItem().toString().trim());
+        user.addAttribute("team",teamTextField.getText());
+        user.addAttribute("branch",branchComboBox.getSelectedItem().toString());
         return user;
     }
     
