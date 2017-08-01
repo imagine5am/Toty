@@ -137,7 +137,7 @@ public class LoginView extends javax.swing.JFrame {
             String password=new String(passwordTextField.getPassword());
             password=new Encryptor(password).run();
             Login login=new Login(username,password);
-            byte b=1;
+            int b=1;
             Packet packet=new Packet(b,login);
             out.writeObject(packet);
             String result=in.readUTF();

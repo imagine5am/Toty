@@ -2,7 +2,6 @@ package org.Toty.Commons;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.Set;
 
 /**
  *
@@ -30,7 +29,7 @@ public class User implements Serializable{
     }
 
     public String getPassword() {
-        return new String(username);
+        return new String(password);
     }
 
     public HashMap<String,String> getAttributes() {

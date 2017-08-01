@@ -3,6 +3,7 @@ package org.Toty.Server.Service;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import org.Toty.Commons.Login;
 
@@ -21,6 +22,16 @@ public class AdminLoginService {
             String password=new String("root");
             connection=DriverManager.getConnection("jdbc:mysql://localhost:3306/totyadmin",username,password);
         }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    public void create(){
+        try{
+            Statement statement=connection.createStatement();
+            statement.executeUpdate(new String("create table login(username varchar(50) unique primary key,password varchar(50));"));
+        }
+        catch(SQLException e){
             e.printStackTrace();
         }
     }

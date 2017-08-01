@@ -28,7 +28,7 @@ public class ServerThread extends Thread {
         try{
             ObjectInputStream in=new ObjectInputStream(socket.getInputStream());
             Packet packet=(Packet)in.readObject();
-            byte byteCode=packet.getCode();
+            int byteCode=packet.getCode();
             if(byteCode==1){
                 Login login=(Login)packet.getObject();
                 DataOutputStream out=new DataOutputStream(socket.getOutputStream());
@@ -45,7 +45,7 @@ public class ServerThread extends Thread {
             else if(byteCode==2){
                 User user=(User)packet.getObject();
                 System.out.println("Data User check");
-                System.out.println("Username: "+user.getUsername()+" Password: "+user.getPassword());
+                System.out.println(user);
                 DataOutputStream out=new DataOutputStream(socket.getOutputStream());
                 SignUpRequestService signUpService=new SignUpRequestService();
                 boolean result=signUpService.add(user);
@@ -61,16 +61,16 @@ public class ServerThread extends Thread {
                 Login login=(Login)packet.getObject();
                 System.out.println("Data Admin check");
                 System.out.println("Username: "+login.getUsername()+" Password: "+login.getPassword());
-                DataOutputStream out=new DataOutputStream(socket.getOutputStream());
+                ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
                 AdminLoginService loginService=new AdminLoginService();
-                boolean result=loginService.check(login);
-                if(result){
-                    SignUpRequestService signUpService=new SignUpRequestService();
-                    //Packet packet=new Packet((byte)101,(Object)signUpService.getAllRequests);
-                    out.writeUTF(new String("true"));
+                if(loginService.check(login)){
+                    SignUpRequestService service=new SignUpRequestService();
+                    ArrayList<User> allUsers=(ArrayList<User>)service.getAllRequests();
+                    Packet p=new Packet(101,(Object)allUsers);
+                    out.writeObject(p);
                 }
                 else{
-                    out.writeUTF(new String("false"));
+                    Packet p=new Packet(100,null);
                 }
             }
             else if(byteCode==4){

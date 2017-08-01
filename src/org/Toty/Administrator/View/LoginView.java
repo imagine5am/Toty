@@ -6,6 +6,8 @@ import org.Toty.Commons.Packet;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import org.Toty.Commons.User;
 
 
 /**
@@ -15,6 +17,7 @@ import java.net.*;
 public class LoginView extends javax.swing.JFrame {
 
     private Socket socket;
+    
     public LoginView() {
         initComponents();
         try{
@@ -45,6 +48,7 @@ public class LoginView extends javax.swing.JFrame {
         goButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Administrator Login");
 
         jLabel1.setText("Administrator Login");
 
@@ -114,10 +118,9 @@ public class LoginView extends javax.swing.JFrame {
 
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
         ObjectOutputStream out;
-        DataInputStream in;
+        ObjectInputStream in;
         try{
             out=new ObjectOutputStream(socket.getOutputStream());
-            in=new DataInputStream(socket.getInputStream());
             String username=userNameTextField.getText();
             String password=new String(passwordTextField.getPassword());
             System.out.println("Data Entered: "+username+" "+password);
@@ -125,12 +128,13 @@ public class LoginView extends javax.swing.JFrame {
             System.out.println("Username: "+username);
             System.out.println("Password: "+password);
             Login login=new Login(username,password);
-            byte b=3;
+            int b=3;
             Packet packet=new Packet(b,login);
             out.writeObject(packet);
-            String result=in.readUTF();
-            if(result.equals("true")){
-                MainView z=new MainView(socket);
+            in=new ObjectInputStream(socket.getInputStream());
+            Packet p=(Packet)in.readObject();
+            if(p.getCode()==101){
+                MainView z=new MainView(socket,in,out,new String(username),(ArrayList<User>)p.getObject());
                 this.setVisible(false);
                 z.setVisible(true);
                 dispose();
@@ -139,8 +143,6 @@ public class LoginView extends javax.swing.JFrame {
                 notifyLabel.setText("Wrong Credentials");
                 passwordTextField.setText("");
             }
-            out.close();
-            in.close();
         }
         catch(Exception e){
             e.printStackTrace();
@@ -181,16 +183,6 @@ public class LoginView extends javax.swing.JFrame {
                 new LoginView().setVisible(true);
             }
         });
-    }
-    
-    public void finalize(){
-        try{
-            socket.close();
-            System.out.println("Socket Closed\n");
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

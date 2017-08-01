@@ -14,7 +14,7 @@ import org.jasypt.util.password.ConfigurablePasswordEncryptor;
  *
  * @author Shivam Sood
  */
-public class CreateAdmin {
+public class CreateAdminDirect {
     public static void main(String args[]) throws Exception{
         Socket socket=new Socket("localhost",1234);
         System.out.println("___USE THiS___");

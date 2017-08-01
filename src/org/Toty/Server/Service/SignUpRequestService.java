@@ -127,14 +127,16 @@ public class SignUpRequestService {
             Statement statement=connection.createStatement();
             ResultSet rs=statement.executeQuery("select * from request;");
             User tempUser;
-            if(rs.next()){
+            while(rs.next()){
                 tempUser=new User(rs.getString("username"));
                 tempUser.addAttribute("nationality",rs.getString("nationality"));
                 tempUser.addAttribute("role",rs.getString("role"));
                 tempUser.addAttribute("team",rs.getString("team"));
                 tempUser.addAttribute("branch",rs.getString("branch"));
                 allUsers.add(tempUser);
+                //System.out.println(tempUser);
             }
+            rs.close();
         }catch(Exception e){
             e.printStackTrace();
         }

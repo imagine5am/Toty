@@ -8,7 +8,6 @@ import org.Toty.Commons.Encryptor;
 import org.Toty.Commons.Login;
 import org.Toty.Commons.Packet;
 import org.Toty.Commons.User;
-import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 
 /**
  *
@@ -246,6 +245,7 @@ public class SignUpView extends javax.swing.JFrame {
 
     public User generateUser(String password){
         User user=new User(usernameTextField.getText().trim(),password);
+        System.out.println(user.getPassword());
         user.addAttribute("nationality",nationalityComboBox.getSelectedItem().toString());
         user.addAttribute("role",roleComboBox.getSelectedItem().toString().trim());
         user.addAttribute("team",teamTextField.getText());
