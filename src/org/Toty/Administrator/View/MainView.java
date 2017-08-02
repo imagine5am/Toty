@@ -1,10 +1,13 @@
 package org.Toty.Administrator.View;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.table.DefaultTableModel;
 import org.Toty.Commons.Packet;
 import org.Toty.Commons.User;
@@ -27,8 +30,11 @@ public class MainView extends javax.swing.JFrame {
         this.in=in;
         DefaultTableModel table=(DefaultTableModel)usersTable.getModel();
         for(User user:allUsers){
-            String[] tempUserString={user.getUsername(),user.getAttribute("nationality"),
-                user.getAttribute("role"),user.getAttribute("team"),user.getAttribute("branch")};
+            ButtonGroup group=new ButtonGroup();
+            group.add(new JButton("."+File.pathSeparator+"images"+File.pathSeparator+"check.png"));
+            group.add(new JButton("."+File.pathSeparator+"images"+File.pathSeparator+"check.png"));
+            Object[] tempUserString={user.getUsername(),user.getAttribute("nationality"),
+                user.getAttribute("role"),user.getAttribute("team"),user.getAttribute("branch"),group};
             table.addRow(tempUserString);
         }
     }
@@ -47,7 +53,7 @@ public class MainView extends javax.swing.JFrame {
         logoutButton = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         usersTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -72,23 +78,30 @@ public class MainView extends javax.swing.JFrame {
             Class[] types = new Class [] {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
-        jScrollPane1.setViewportView(usersTable);
+        jScrollPane2.setViewportView(usersTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 501, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 500, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -149,7 +162,7 @@ public class MainView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton logoutButton;
     private javax.swing.JLabel usernameLabel;

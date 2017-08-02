@@ -12,7 +12,9 @@ import org.jasypt.digest.PooledStringDigester;
  * @author Shivam Sood
  */
 public class LoginView extends javax.swing.JFrame {
+    
     private Socket socket;
+    
     public LoginView() {
         initComponents();
         try{
@@ -128,11 +130,9 @@ public class LoginView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
-        ObjectOutputStream out;
-        DataInputStream in;
         try{
-            out=new ObjectOutputStream(socket.getOutputStream());
-            in=new DataInputStream(socket.getInputStream());
+            ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in=new ObjectInputStream(socket.getInputStream());
             String username=userNameTextField.getText();
             String password=new String(passwordTextField.getPassword());
             password=new Encryptor(password).run();
@@ -140,8 +140,10 @@ public class LoginView extends javax.swing.JFrame {
             int b=1;
             Packet packet=new Packet(b,login);
             out.writeObject(packet);
-            String result=in.readUTF();
-            if(result.equals("true")){
+            out.flush();
+            Packet result=(Packet)in.readObject();
+            
+            if(result.getCode()==501){
                 MainView z=new MainView(socket);
                 this.setVisible(false);
                 z.setVisible(true);

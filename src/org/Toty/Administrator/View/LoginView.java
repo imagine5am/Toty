@@ -117,10 +117,10 @@ public class LoginView extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void goButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_goButtonActionPerformed
-        ObjectOutputStream out;
-        ObjectInputStream in;
+
         try{
-            out=new ObjectOutputStream(socket.getOutputStream());
+            ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream in=new ObjectInputStream(socket.getInputStream());
             String username=userNameTextField.getText();
             String password=new String(passwordTextField.getPassword());
             System.out.println("Data Entered: "+username+" "+password);
@@ -131,7 +131,6 @@ public class LoginView extends javax.swing.JFrame {
             int b=3;
             Packet packet=new Packet(b,login);
             out.writeObject(packet);
-            in=new ObjectInputStream(socket.getInputStream());
             Packet p=(Packet)in.readObject();
             if(p.getCode()==101){
                 MainView z=new MainView(socket,in,out,new String(username),(ArrayList<User>)p.getObject());

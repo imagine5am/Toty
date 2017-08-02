@@ -27,66 +27,65 @@ public class ServerThread extends Thread {
     public void run(){
         try{
             ObjectInputStream in=new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
             Packet packet=(Packet)in.readObject();
             int byteCode=packet.getCode();
-            if(byteCode==1){
-                Login login=(Login)packet.getObject();
-                DataOutputStream out=new DataOutputStream(socket.getOutputStream());
-                LoginService loginService=new LoginService();
-                boolean result=loginService.check(login);
-                if(result){
-                    out.writeUTF(new String("true"));
-                }
-                else{
-                    out.writeUTF(new String("false"));
-                }
-                out.close();
-            }
-            else if(byteCode==2){
+            
+            if(byteCode==2){
                 User user=(User)packet.getObject();
                 System.out.println("Data User check");
                 System.out.println(user);
-                DataOutputStream out=new DataOutputStream(socket.getOutputStream());
                 SignUpRequestService signUpService=new SignUpRequestService();
                 boolean result=signUpService.add(user);
                 if(result){
-                    out.writeUTF(new String("true"));
+                    out.writeObject(new Packet(503));
                 }
                 else{
-                    out.writeUTF(new String("false"));
+                    out.writeObject(new Packet(502));
                 }
-                out.close();
+                out.flush();
+            }
+            
+            if(byteCode==1){
+                Login login=(Login)packet.getObject();
+                //DataOutputStream out=new DataOutputStream(socket.getOutputStream());
+                LoginService loginService=new LoginService();
+                boolean result=loginService.check(login);
+                if(result){
+                    out.writeObject(new Packet(501));
+                }
+                else{
+                    out.writeObject(new Packet(500));
+                }
+                out.flush();
             }
             else if(byteCode==3){
                 Login login=(Login)packet.getObject();
                 System.out.println("Data Admin check");
                 System.out.println("Username: "+login.getUsername()+" Password: "+login.getPassword());
-                ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
                 AdminLoginService loginService=new AdminLoginService();
                 if(loginService.check(login)){
                     SignUpRequestService service=new SignUpRequestService();
                     ArrayList<User> allUsers=(ArrayList<User>)service.getAllRequests();
-                    Packet p=new Packet(101,(Object)allUsers);
-                    out.writeObject(p);
+                    out.writeObject(new Packet(101,(Object)allUsers));
                 }
                 else{
-                    Packet p=new Packet(100,null);
+                    out.writeObject(new Packet(100));
                 }
             }
             else if(byteCode==4){
                 Login login=(Login)packet.getObject();
                 System.out.println("Data Admin add");
                 System.out.println("Username: "+login.getUsername()+" Password: "+login.getPassword());
-                DataOutputStream out=new DataOutputStream(socket.getOutputStream());
                 AdminLoginService loginService=new AdminLoginService();
                 boolean result=loginService.add(login);
                 if(result){
-                    out.writeUTF(new String("true"));
+                    out.writeObject(new Packet(102));
                 }
                 else{
-                    out.writeUTF(new String("false"));
+                    out.writeObject(new Packet(103));
                 }
-                out.close();
+                out.flush();
             }
             in.close();
         }

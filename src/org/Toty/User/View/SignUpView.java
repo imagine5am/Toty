@@ -2,6 +2,7 @@ package org.Toty.User.View;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import org.Toty.Commons.Encryptor;
@@ -213,13 +214,13 @@ public class SignUpView extends javax.swing.JFrame {
         else if(password.equals(confirmPassword)){
             try{
                 ObjectOutputStream out=new ObjectOutputStream(socket.getOutputStream());
-                DataInputStream in=new DataInputStream(socket.getInputStream());
+                ObjectInputStream in=new ObjectInputStream(socket.getInputStream());
                 password=new Encryptor(password).run();
                 System.out.println(password);
-                Packet packet=new Packet((byte)2,generateUser(password));
+                Packet packet=new Packet(2,generateUser(password));
                 out.writeObject(packet);
-                String result=in.readUTF();
-                if(result.equals("true")){
+                Packet result=(Packet)in.readObject();
+                if(result.getCode()==503){
                     LoginView z=new LoginView();
                     this.setVisible(false);
                     z.setVisible(true);
@@ -227,8 +228,6 @@ public class SignUpView extends javax.swing.JFrame {
                 }
                 else{
                     notifyLabel.setText("Username Exists");
-                    //passwordTextField.setText("");
-                    //confirmPasswordTextField.setText("");
                 }
             out.close();
             in.close();
