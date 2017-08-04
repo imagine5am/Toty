@@ -4,14 +4,11 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
-import javafx.scene.control.CheckBox;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -22,7 +19,6 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
-//import org.Toty.Administrator.View.CustomRenderer.PanelRenderer;
 import org.Toty.Commons.Packet;
 import org.Toty.Commons.User;
 
@@ -43,16 +39,13 @@ public class MainView extends javax.swing.JFrame {
         this.out=out;
         this.in=in;
         DefaultTableModel table=(DefaultTableModel)usersTable.getModel();
-        usersTable.getColumn((Object)"Actions").setCellRenderer(new PanelRenderer());
-        usersTable.getColumn((Object)"Actions").setCellEditor(new PanelEditor(new JCheckBox()));
         for(User user:allUsers){
-            //ButtonGroup group=new ButtonGroup();
-            //group.add(new JButton("."+File.pathSeparator+"images"+File.pathSeparator+"check.png"));
-            //group.add(new JButton("."+File.pathSeparator+"images"+File.pathSeparator+"check.png"));
             Object[] tempUserString={user.getUsername(),user.getAttribute("nationality"),
                 user.getAttribute("role"),user.getAttribute("team"),user.getAttribute("branch"),user};
             table.addRow(tempUserString);
         }
+        usersTable.getColumn("Actions").setCellRenderer(new PanelRenderer());
+        usersTable.getColumn("Actions").setCellEditor(new PanelEditor(new JCheckBox()));
     }
 
     /**
@@ -95,7 +88,7 @@ public class MainView extends javax.swing.JFrame {
                 java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -182,15 +175,17 @@ public class MainView extends javax.swing.JFrame {
             setOpaque(true);
             init();
         }
-        // getClass().getResource("/org/Toty/Administrator/View/images/check.png")
+        
         private void init(){
             setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
             add(new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/check.png"))));
             add(new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/delete.png"))));
+            pack();
         }
-    
+        
+        @Override
         public Component getTableCellRendererComponent(JTable table,Object value,boolean isSelected,
-                                                         boolean hasFocus,int row,int column){
+                                        boolean hasFocus,int row,int column){
             if ( isSelected ){
                 setForeground( table.getSelectionForeground() );
                 setBackground( table.getSelectionBackground() );
@@ -205,32 +200,41 @@ public class MainView extends javax.swing.JFrame {
     class PanelEditor extends DefaultCellEditor{
         protected JPanel panel;
         protected JButton button1,button2;
+        protected boolean button1Clicked,button2Clicked;
     
         public PanelEditor(JCheckBox checkBox){
             super(checkBox);
+            button1Clicked=false;
+            button2Clicked=false;
             panel=new JPanel(new FlowLayout(FlowLayout.CENTER,5,0));
-            button1=new JButton("1");
+            button1=new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/check.png")));
             button1.setOpaque(true);
             button1.setActionCommand("Action 1");
             button1.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
                     JOptionPane.showMessageDialog( button1, button1.getText()+": Ouch!" );
                     fireEditingStopped();
+                    button1Clicked=true;
                 }
             });
-            button2=new JButton("2");
+            button2=new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/delete.png")));
             button2.setOpaque(true);
             button2.addActionListener(new ActionListener(){
                 public void actionPerformed( ActionEvent e ) {
                     JOptionPane.showMessageDialog( button2, button2.getText()+ ": Ouch!" );
                     fireEditingStopped();
+                    button2Clicked=true;
                 }
             });
             panel.add( button1 );
             panel.add( button2 );
         }
+        
         @Override
         public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
+            System.out.println("***"+value);
+            User a=(User)value;
+            System.out.println("getTableCellEditorComponent: "+a.getUsername());
             if(isSelected){
                 button1.setForeground(table.getSelectionForeground());
                 button1.setBackground(table.getSelectionBackground());
@@ -238,6 +242,12 @@ public class MainView extends javax.swing.JFrame {
             else{
                 button1.setForeground(table.getForeground());
                 button1.setBackground(table.getBackground());
+            }
+            if(button1Clicked){
+                button1Clicked=false;
+            }
+            else if(button2Clicked){
+                button1Clicked=false;
             }
             return panel;
         }

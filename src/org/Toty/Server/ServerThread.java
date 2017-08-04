@@ -88,6 +88,7 @@ public class ServerThread extends Thread {
                 out.flush();
             }
             in.close();
+            out.close();
         }
         catch(IOException e){
             e.printStackTrace();

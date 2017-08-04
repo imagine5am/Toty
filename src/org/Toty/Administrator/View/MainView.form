@@ -137,7 +137,7 @@
                             <Column editable="false" title="Role" type="java.lang.String"/>
                             <Column editable="false" title="Team" type="java.lang.String"/>
                             <Column editable="false" title="Branch" type="java.lang.String"/>
-                            <Column editable="false" title="Actions" type="java.lang.Object"/>
+                            <Column editable="true" title="Actions" type="java.lang.Object"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
