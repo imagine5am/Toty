@@ -41,17 +41,24 @@ Code    Object
 2       user add
 3       admin login
 4       admin add
+5       user request to added rejected
+6       user request to to added to login
 
 -----Reply------
-500     user login failed
-501     user login correct
-502     user request not added
-503     user request added
 100     Admin Login Failed
 101     Admin Login correct + All Requests Reply
 102     admin added
 103     admin not added
+500     user login failed
+501     user login correct
+502     user request not added
+503     user request added
+504     user request to added rejected
+505     user request to to added to login
 
 ----Failure Messages----
-404     Login Failed     
+404     Login Failed    
+
+----Universal----
+909     Logout
 */

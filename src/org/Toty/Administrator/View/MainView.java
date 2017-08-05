@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,6 +22,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import org.Toty.Commons.Packet;
 import org.Toty.Commons.User;
+import org.Toty.Server.Service.SignUpApproveService;
+import org.Toty.Server.Service.SignUpRequestService;
 
 /**
  *
@@ -31,17 +34,21 @@ public class MainView extends javax.swing.JFrame {
     private Socket socket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private ArrayList<User> allUsers;
+    private DefaultTableModel table;
+    private String adminname;
     
-    public MainView(Socket socket,ObjectInputStream in,ObjectOutputStream out,String username,ArrayList<User> allUsers) {
+    public MainView(Socket socket,ObjectInputStream in,ObjectOutputStream out,String adminname,ArrayList<User> allUsers) {
+        this.allUsers=allUsers;
         this.socket=socket;
         initComponents();
-        usernameLabel.setText(new String(username));
+        usernameLabel.setText(this.adminname=new String(adminname));
         this.out=out;
         this.in=in;
-        DefaultTableModel table=(DefaultTableModel)usersTable.getModel();
+        table=(DefaultTableModel)usersTable.getModel();
         for(User user:allUsers){
             Object[] tempUserString={user.getUsername(),user.getAttribute("nationality"),
-                user.getAttribute("role"),user.getAttribute("team"),user.getAttribute("branch"),user};
+                user.getAttribute("role"),user.getAttribute("team"),user.getAttribute("branch"),null};
             table.addRow(tempUserString);
         }
         usersTable.getColumn("Actions").setCellRenderer(new PanelRenderer());
@@ -73,6 +80,11 @@ public class MainView extends javax.swing.JFrame {
         usernameLabel.setText("Insert admin name here");
 
         logoutButton.setText("Logout");
+        logoutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logoutButtonActionPerformed(evt);
+            }
+        });
 
         jTabbedPane1.setTabPlacement(javax.swing.JTabbedPane.LEFT);
 
@@ -99,7 +111,7 @@ public class MainView extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        usersTable.setRowHeight(40);
+        usersTable.setRowHeight(45);
         jScrollPane2.setViewportView(usersTable);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -160,9 +172,23 @@ public class MainView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void logoutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logoutButtonActionPerformed
+        Packet packet=new Packet(909,adminname);
+        try{
+            out.writeObject(packet);
+            System.out.println("logout Successful");
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+    }//GEN-LAST:event_logoutButtonActionPerformed
     
     public void finalize(){
         try{
+            in.close();
+            out.close();
             socket.close();
         }catch(IOException e){
             e.printStackTrace();
@@ -200,30 +226,56 @@ public class MainView extends javax.swing.JFrame {
     class PanelEditor extends DefaultCellEditor{
         protected JPanel panel;
         protected JButton button1,button2;
-        protected boolean button1Clicked,button2Clicked;
-    
+        protected int row,column;
         public PanelEditor(JCheckBox checkBox){
             super(checkBox);
-            button1Clicked=false;
-            button2Clicked=false;
             panel=new JPanel(new FlowLayout(FlowLayout.CENTER,5,0));
             button1=new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/check.png")));
             button1.setOpaque(true);
             button1.setActionCommand("Action 1");
             button1.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    JOptionPane.showMessageDialog( button1, button1.getText()+": Ouch!" );
                     fireEditingStopped();
-                    button1Clicked=true;
+                    System.out.println("Checked Row: " + row + " Column: " + column);
+                    Packet requestPacket=new Packet(6,allUsers.get(row));//user request to to added to login
+                    try {
+                        out.writeObject(requestPacket);
+                        out.flush();
+                        Packet responsePacket = (Packet) in.readObject();
+                        if (responsePacket.getCode() == 505) {
+                            if ((Boolean) responsePacket.getObject()) {
+                                allUsers.remove(row);
+                                table.removeRow(row);
+                            }
+                        }
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    } catch (ClassNotFoundException exception){
+                        exception.printStackTrace();
+                    }
                 }
             });
             button2=new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/delete.png")));
             button2.setOpaque(true);
             button2.addActionListener(new ActionListener(){
                 public void actionPerformed( ActionEvent e ) {
-                    JOptionPane.showMessageDialog( button2, button2.getText()+ ": Ouch!" );
                     fireEditingStopped();
-                    button2Clicked=true;
+                    Packet requestPacket=new Packet(5,allUsers.get(row).getUsername());
+                    try{
+                        out.writeObject(requestPacket);
+                        out.flush();
+                        Packet responsePacket=(Packet)in.readObject();
+                        if(responsePacket.getCode()==504){
+                            if((Boolean)responsePacket.getObject()){
+                                allUsers.remove(row);
+                                table.removeRow(row);
+                            }
+                        }
+                    }catch(IOException exception){
+                        exception.printStackTrace();
+                    }catch(ClassNotFoundException exception2){
+                        exception2.printStackTrace();
+                    }
                 }
             });
             panel.add( button1 );
@@ -231,28 +283,20 @@ public class MainView extends javax.swing.JFrame {
         }
         
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
-            System.out.println("***"+value);
-            User a=(User)value;
-            System.out.println("getTableCellEditorComponent: "+a.getUsername());
+        public Component getTableCellEditorComponent(JTable jTable, Object value, boolean isSelected, int row, int column){
             if(isSelected){
-                button1.setForeground(table.getSelectionForeground());
-                button1.setBackground(table.getSelectionBackground());
+                button1.setForeground(jTable.getSelectionForeground());
+                button1.setBackground(jTable.getSelectionBackground());
             }
             else{
-                button1.setForeground(table.getForeground());
-                button1.setBackground(table.getBackground());
+                button1.setForeground(jTable.getForeground());
+                button1.setBackground(jTable.getBackground());
             }
-            if(button1Clicked){
-                button1Clicked=false;
-            }
-            else if(button2Clicked){
-                button1Clicked=false;
-            }
+            this.row=row;
+            this.column=column;
             return panel;
         }
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

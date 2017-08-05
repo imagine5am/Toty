@@ -10,6 +10,7 @@ import org.Toty.Server.Service.SignUpRequestService;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import org.Toty.Server.Service.SignUpApproveService;
 
 /**
  *
@@ -45,47 +46,59 @@ public class ServerThread extends Thread {
                 }
                 out.flush();
             }
-            
-            if(byteCode==1){
-                Login login=(Login)packet.getObject();
-                //DataOutputStream out=new DataOutputStream(socket.getOutputStream());
-                LoginService loginService=new LoginService();
-                boolean result=loginService.check(login);
-                if(result){
-                    out.writeObject(new Packet(501));
+            else {
+                while (byteCode != 909) {
+                    if (byteCode == 1) {
+                        Login login = (Login) packet.getObject();
+                        //DataOutputStream out=new DataOutputStream(socket.getOutputStream());
+                        LoginService loginService = new LoginService();
+                        boolean result = loginService.check(login);
+                        if (result) {
+                            out.writeObject(new Packet(501));
+                        } else {
+                            out.writeObject(new Packet(500));
+                        }
+                        out.flush();
+                    } else if (byteCode == 3) {
+                        Login login = (Login) packet.getObject();
+                        System.out.println("Data Admin check");
+                        System.out.println("Username: " + login.getUsername() + " Password: " + login.getPassword());
+                        AdminLoginService loginService = new AdminLoginService();
+                        if (loginService.check(login)) {
+                            SignUpRequestService service = new SignUpRequestService();
+                            ArrayList<User> allUsers = (ArrayList<User>) service.getAllRequests();
+                            out.writeObject(new Packet(101, (Object) allUsers));
+                        } else {
+                            out.writeObject(new Packet(100));
+                        }
+                    } else if (byteCode == 4) {
+                        Login login = (Login) packet.getObject();
+                        System.out.println("Data Admin add");
+                        System.out.println("Username: " + login.getUsername() + " Password: " + login.getPassword());
+                        AdminLoginService loginService = new AdminLoginService();
+                        boolean result = loginService.add(login);
+                        if (result) {
+                            out.writeObject(new Packet(102));
+                        } else {
+                            out.writeObject(new Packet(103));
+                        }
+                        out.flush();
+                    } else if (byteCode == 5){ //user request to added rejected
+                        String username=(String)packet.getObject();
+                        SignUpRequestService requestService = new SignUpRequestService();
+                        boolean result=requestService.remove(username);
+                        out.writeObject(new Packet(504,new Boolean(result)));
+                        out.flush();                        
+                    } else if (byteCode == 6){ //user request to to added to login
+                        User user=(User)packet.getObject();
+                        SignUpApproveService approveService = new SignUpApproveService();
+                        boolean result=approveService.approveUser(user);
+                        out.writeObject(new Packet(505,new Boolean(result)));
+                    }
+                    
+                    packet = (Packet) in.readObject();
+                    byteCode = packet.getCode();
                 }
-                else{
-                    out.writeObject(new Packet(500));
-                }
-                out.flush();
-            }
-            else if(byteCode==3){
-                Login login=(Login)packet.getObject();
-                System.out.println("Data Admin check");
-                System.out.println("Username: "+login.getUsername()+" Password: "+login.getPassword());
-                AdminLoginService loginService=new AdminLoginService();
-                if(loginService.check(login)){
-                    SignUpRequestService service=new SignUpRequestService();
-                    ArrayList<User> allUsers=(ArrayList<User>)service.getAllRequests();
-                    out.writeObject(new Packet(101,(Object)allUsers));
-                }
-                else{
-                    out.writeObject(new Packet(100));
-                }
-            }
-            else if(byteCode==4){
-                Login login=(Login)packet.getObject();
-                System.out.println("Data Admin add");
-                System.out.println("Username: "+login.getUsername()+" Password: "+login.getPassword());
-                AdminLoginService loginService=new AdminLoginService();
-                boolean result=loginService.add(login);
-                if(result){
-                    out.writeObject(new Packet(102));
-                }
-                else{
-                    out.writeObject(new Packet(103));
-                }
-                out.flush();
             }
             in.close();
             out.close();
@@ -94,6 +107,9 @@ public class ServerThread extends Thread {
             e.printStackTrace();
         }
         catch(ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        catch(Exception e){
             e.printStackTrace();
         }
     }

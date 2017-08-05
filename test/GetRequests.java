@@ -15,10 +15,7 @@ import org.jasypt.util.password.ConfigurablePasswordEncryptor;
 public class GetRequests {
     public static void main(String args[]) throws Exception{
         SignUpRequestService service=new SignUpRequestService();
-        ArrayList<User> allUsers=(ArrayList<User>)service.getAllRequests();
-        //if(allUsers==null)
-        for(User user:allUsers){
-            System.out.println(user);
-        }
+        User user=service.getUser("rishi");
+        System.out.println(user.toString());
     }
 }

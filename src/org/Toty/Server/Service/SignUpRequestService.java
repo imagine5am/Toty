@@ -69,6 +69,27 @@ public class SignUpRequestService {
         return true;
     }
     
+    public User getUser(String username){
+        String query="select * from request where username='"+username+"';";
+        User user=null;
+        try{
+            Statement s=connection.createStatement();
+            ResultSet rs=s.executeQuery(query);
+            if(rs.next()){
+              user=new User(rs.getString("username"),rs.getString("password"));
+              user.addAttribute("nationality",rs.getString("nationality"));
+              user.addAttribute("role",rs.getString("role"));
+              user.addAttribute("team",rs.getString("team"));
+              user.addAttribute("branch",rs.getString("branch"));
+              return user;
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return user;
+    }
+    
     public boolean remove(User user){
         if(check(user)){
             try{
