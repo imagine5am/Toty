@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -37,15 +38,17 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class MainView extends javax.swing.JFrame {
     private Socket socket;
     private String filename;
+    private List<JCheckBox> allAttributeCheckBoxes;
   
     public MainView(Socket socket) {
         this.socket=socket;
         initComponents();
         this.filename=new String();
-        attributesPanel.add(new CheckBoxGroup(new String[]{"Indian", "American", "Japanese", "Chinese", "Australians", "British", "Greek"}));
-        attributesPanel.add(new CheckBoxGroup(new String[]{"Associate Developer", "Developer", "Project Manager", "Humar Resources", "Sales"}));
-        attributesPanel.add(new CheckBoxGroup(new String[]{"A","B","C"}));
-        attributesPanel.add(new CheckBoxGroup(new String[]{"Bangalore", "New Delhi", "Mumbai", "Chennai", "Hyderabad"}));
+        allAttributeCheckBoxes=new ArrayList<>();
+        attributesPanel.add(new CheckBoxGroup("Nationality ",new String[]{"Indian", "American", "Japanese", "Chinese", "Australians", "British", "Greek"}));
+        attributesPanel.add(new CheckBoxGroup("Role ",new String[]{"Associate Developer", "Developer", "Project Manager", "Humar Resources", "Sales"}));
+        attributesPanel.add(new CheckBoxGroup("Team ",new String[]{"A","B","C"}));
+        attributesPanel.add(new CheckBoxGroup("Branch ",new String[]{"Bangalore", "New Delhi", "Mumbai", "Chennai", "Hyderabad"}));
     }
 
     /**
@@ -59,26 +62,28 @@ public class MainView extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         Tabs = new javax.swing.JTabbedPane();
-        jPanel2 = new javax.swing.JPanel();
+        uploadFileTab = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         filenameTextField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        encryptUploadButton = new javax.swing.JButton();
         attributesPanel = new javax.swing.JPanel();
+        viewFilesTab = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(720, 480));
+
+        uploadFileTab.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                uploadFileTabComponentShown(evt);
+            }
+        });
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Select File:");
 
         filenameTextField.setEditable(false);
-        filenameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filenameTextFieldActionPerformed(evt);
-            }
-        });
 
         jButton1.setText("Select");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -106,37 +111,56 @@ public class MainView extends javax.swing.JFrame {
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jButton2.setText("Encrypt and Upload");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        encryptUploadButton.setText("Encrypt and Upload");
+        encryptUploadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                encryptUploadButtonActionPerformed(evt);
             }
         });
 
         attributesPanel.setPreferredSize(new java.awt.Dimension(720, 480));
         attributesPanel.setLayout(new java.awt.GridLayout(1, 4));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout uploadFileTabLayout = new javax.swing.GroupLayout(uploadFileTab);
+        uploadFileTab.setLayout(uploadFileTabLayout);
+        uploadFileTabLayout.setHorizontalGroup(
+            uploadFileTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(uploadFileTabLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jButton2))
+                .addComponent(encryptUploadButton))
             .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        uploadFileTabLayout.setVerticalGroup(
+            uploadFileTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(uploadFileTabLayout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2))
+                .addComponent(encryptUploadButton))
         );
 
-        Tabs.addTab("Upload File", jPanel2);
+        Tabs.addTab("Upload File", uploadFileTab);
+
+        viewFilesTab.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                viewFilesTabComponentShown(evt);
+            }
+        });
+
+        javax.swing.GroupLayout viewFilesTabLayout = new javax.swing.GroupLayout(viewFilesTab);
+        viewFilesTab.setLayout(viewFilesTabLayout);
+        viewFilesTabLayout.setHorizontalGroup(
+            viewFilesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 671, Short.MAX_VALUE)
+        );
+        viewFilesTabLayout.setVerticalGroup(
+            viewFilesTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 452, Short.MAX_VALUE)
+        );
+
+        Tabs.addTab("View Files", viewFilesTab);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -163,6 +187,17 @@ public class MainView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void uploadFileTabComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_uploadFileTabComponentShown
+        System.out.println("Upload Tab Selected");
+    }//GEN-LAST:event_uploadFileTabComponentShown
+
+    private void encryptUploadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_encryptUploadButtonActionPerformed
+        for(JCheckBox cb:allAttributeCheckBoxes){
+            if(cb.isSelected())
+                System.out.println(cb.getText());
+        }
+    }//GEN-LAST:event_encryptUploadButtonActionPerformed
+
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         JFileChooser chooser=new JFileChooser();
         chooser.showDialog(MainView.this,"Select");
@@ -172,13 +207,9 @@ public class MainView extends javax.swing.JFrame {
         filenameTextField.setText(filename);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filenameTextFieldActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_filenameTextFieldActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void viewFilesTabComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_viewFilesTabComponentShown
+        System.out.println("View Files Tab Selected");
+    }//GEN-LAST:event_viewFilesTabComponentShown
     
     public void finalize(){
         try{
@@ -191,21 +222,23 @@ public class MainView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane Tabs;
     private javax.swing.JPanel attributesPanel;
+    private javax.swing.JButton encryptUploadButton;
     private javax.swing.JTextField filenameTextField;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel uploadFileTab;
+    private javax.swing.JPanel viewFilesTab;
     // End of variables declaration//GEN-END:variables
+    
     class CheckBoxGroup extends JPanel {
 
         private JCheckBox all;
         private List<JCheckBox> checkBoxes;
 
-        public CheckBoxGroup(String... options) {
-            checkBoxes = new ArrayList<>(25);
+        public CheckBoxGroup(String title,String... options) {
+            checkBoxes = new ArrayList<>();
             setLayout(new BorderLayout());
             JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
             all = new JCheckBox("Select All");
@@ -217,6 +250,7 @@ public class MainView extends javax.swing.JFrame {
                     }
                 }
             });
+            header.add(new JLabel(title));
             header.add(all);
             add(header, BorderLayout.NORTH);
 
@@ -232,15 +266,18 @@ public class MainView extends javax.swing.JFrame {
                     JCheckBox cb = new JCheckBox(options[index]);
                     cb.setOpaque(false);
                     checkBoxes.add(cb);
+                    //******************************
+                    allAttributeCheckBoxes.add(cb);
                     content.add(cb, gbc);
                 }
 
                 JCheckBox cb = new JCheckBox(options[options.length - 1]);
                 cb.setOpaque(false);
                 checkBoxes.add(cb);
+                //******************************
+                allAttributeCheckBoxes.add(cb);
                 gbc.weighty = 1;
                 content.add(cb, gbc);
-
             }
 
             add(new JScrollPane(content));
