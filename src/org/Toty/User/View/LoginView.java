@@ -48,6 +48,7 @@ public class LoginView extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
 
+        jLabel1.setFont(new java.awt.Font("TlwgMono", 1, 18)); // NOI18N
         jLabel1.setText("Login");
 
         jLabel2.setText("Username:");

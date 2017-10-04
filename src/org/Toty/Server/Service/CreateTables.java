@@ -17,6 +17,8 @@ public class CreateTables {
     public CreateTables(){
         username=new String("root");
         password=new String("root");
+        createTotyAdminTables();
+        createTotyTables();
     }
     
     public void createTotyAdminTables(){
@@ -62,5 +64,9 @@ public class CreateTables {
         catch(Exception e){
             e.printStackTrace();
         }
+    }
+    
+    public static void main(String args[]){
+        new CreateTables();
     }
 }

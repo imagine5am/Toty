@@ -1,6 +1,5 @@
 package org.Toty.Administrator.View;
 
-import de.javasoft.plaf.synthetica.SyntheticaBlueMoonLookAndFeel;
 import org.Toty.Commons.Encryptor;
 import org.Toty.Commons.Login;
 import org.Toty.Commons.Packet;

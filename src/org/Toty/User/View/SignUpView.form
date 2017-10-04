@@ -57,19 +57,12 @@
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="-2" pref="92" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="roleComboBox" max="32767" attributes="0"/>
-                                      <Component id="nationalityComboBox" max="32767" attributes="0"/>
-                                      <Component id="branchComboBox" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="teamTextField" min="-2" pref="142" max="-2" attributes="0"/>
-                              </Group>
+                          <EmptySpace pref="53" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="teamTextField" max="32767" attributes="0"/>
+                              <Component id="roleComboBox" alignment="1" pref="174" max="32767" attributes="0"/>
+                              <Component id="nationalityComboBox" alignment="1" max="32767" attributes="0"/>
+                              <Component id="branchComboBox" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
