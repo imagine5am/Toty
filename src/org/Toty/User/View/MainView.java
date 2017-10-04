@@ -1,18 +1,51 @@
 package org.Toty.User.View;
 
+import java.io.File;
 import java.io.IOException;
 
 import java.net.*;
+import javax.swing.JFileChooser;
+
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.LayoutManager;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JViewport;
+import javax.swing.Scrollable;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 /**
  *
  * @author Shivam Sood
  */
 public class MainView extends javax.swing.JFrame {
     private Socket socket;
+    private String filename;
   
     public MainView(Socket socket) {
         this.socket=socket;
         initComponents();
+        this.filename=new String();
+        attributesPanel.add(new CheckBoxGroup(new String[]{"Indian", "American", "Japanese", "Chinese", "Australians", "British", "Greek"}));
+        attributesPanel.add(new CheckBoxGroup(new String[]{"Associate Developer", "Developer", "Project Manager", "Humar Resources", "Sales"}));
+        attributesPanel.add(new CheckBoxGroup(new String[]{"A","B","C"}));
+        attributesPanel.add(new CheckBoxGroup(new String[]{"Bangalore", "New Delhi", "Mumbai", "Chennai", "Hyderabad"}));
     }
 
     /**
@@ -27,18 +60,80 @@ public class MainView extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         Tabs = new javax.swing.JTabbedPane();
         jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        filenameTextField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        attributesPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(720, 480));
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Select File:");
+
+        filenameTextField.setEditable(false);
+        filenameTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filenameTextFieldActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Select");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(filenameTextField)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(filenameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        jButton2.setText("Encrypt and Upload");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        attributesPanel.setPreferredSize(new java.awt.Dimension(720, 480));
+        attributesPanel.setLayout(new java.awt.GridLayout(1, 4));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 775, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jButton2))
+            .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 432, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2))
         );
 
         Tabs.addTab("Upload File", jPanel2);
@@ -67,6 +162,23 @@ public class MainView extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        JFileChooser chooser=new JFileChooser();
+        chooser.showDialog(MainView.this,"Select");
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        File file=chooser.getSelectedFile();
+        filename=file.getAbsolutePath();
+        filenameTextField.setText(filename);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void filenameTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filenameTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_filenameTextFieldActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
     
     public void finalize(){
         try{
@@ -78,7 +190,109 @@ public class MainView extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane Tabs;
+    private javax.swing.JPanel attributesPanel;
+    private javax.swing.JTextField filenameTextField;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     // End of variables declaration//GEN-END:variables
+    class CheckBoxGroup extends JPanel {
+
+        private JCheckBox all;
+        private List<JCheckBox> checkBoxes;
+
+        public CheckBoxGroup(String... options) {
+            checkBoxes = new ArrayList<>(25);
+            setLayout(new BorderLayout());
+            JPanel header = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
+            all = new JCheckBox("Select All");
+            all.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    for (JCheckBox cb : checkBoxes) {
+                        cb.setSelected(all.isSelected());
+                    }
+                }
+            });
+            header.add(all);
+            add(header, BorderLayout.NORTH);
+
+            JPanel content = new ScrollablePane(new GridBagLayout());
+            content.setBackground(UIManager.getColor("List.background"));
+            if (options.length > 0) {
+
+                GridBagConstraints gbc = new GridBagConstraints();
+                gbc.gridwidth = GridBagConstraints.REMAINDER;
+                gbc.anchor = GridBagConstraints.NORTHWEST;
+                gbc.weightx = 1;
+                for (int index = 0; index < options.length - 1; index++) {
+                    JCheckBox cb = new JCheckBox(options[index]);
+                    cb.setOpaque(false);
+                    checkBoxes.add(cb);
+                    content.add(cb, gbc);
+                }
+
+                JCheckBox cb = new JCheckBox(options[options.length - 1]);
+                cb.setOpaque(false);
+                checkBoxes.add(cb);
+                gbc.weighty = 1;
+                content.add(cb, gbc);
+
+            }
+
+            add(new JScrollPane(content));
+        }
+
+        public class ScrollablePane extends JPanel implements Scrollable {
+
+            public ScrollablePane(LayoutManager layout) {
+                super(layout);
+            }
+
+            public ScrollablePane() {
+            }
+
+            @Override
+            public Dimension getPreferredScrollableViewportSize() {
+                return new Dimension(100, 100);
+            }
+
+            @Override
+            public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+                return 32;
+            }
+
+            @Override
+            public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+                return 32;
+            }
+
+            @Override
+            public boolean getScrollableTracksViewportWidth() {
+                boolean track = false;
+                Container parent = getParent();
+                if (parent instanceof JViewport) {
+                    JViewport vp = (JViewport) parent;
+                    track = vp.getWidth() > getPreferredSize().width;
+                }
+                return track;
+            }
+
+            @Override
+            public boolean getScrollableTracksViewportHeight() {
+                boolean track = false;
+                Container parent = getParent();
+                if (parent instanceof JViewport) {
+                    JViewport vp = (JViewport) parent;
+                    track = vp.getHeight() > getPreferredSize().height;
+                }
+                return track;
+            }
+
+        }
+
+    }
 }
