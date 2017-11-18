@@ -75,6 +75,8 @@ public class MainView extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Administrator Login");
+        setPreferredSize(new java.awt.Dimension(900, 503));
+        setResizable(false);
 
         jPanel1.setPreferredSize(new java.awt.Dimension(953, 545));
 
@@ -152,7 +154,7 @@ public class MainView extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 754, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.Alignment.TRAILING)
             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -210,8 +212,8 @@ public class MainView extends javax.swing.JFrame {
         
         private void init(){
             setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
-            add(new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/check.png"))));
-            add(new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/delete.png"))));
+            add(new JButton(new ImageIcon(getClass().getResource("/Administrator/check.png"))));
+            add(new JButton(new ImageIcon(getClass().getResource("/Administrator/delete.png"))));
             pack();
         }
         
@@ -236,7 +238,7 @@ public class MainView extends javax.swing.JFrame {
         public PanelEditor(JCheckBox checkBox){
             super(checkBox);
             panel=new JPanel(new FlowLayout(FlowLayout.CENTER,5,0));
-            button1=new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/check.png")));
+            button1=new JButton(new ImageIcon(getClass().getResource("/Administrator/check.png")));
             button1.setOpaque(true);
             button1.setActionCommand("Action 1");
             button1.addActionListener(new ActionListener(){
@@ -261,7 +263,7 @@ public class MainView extends javax.swing.JFrame {
                     }
                 }
             });
-            button2=new JButton(new ImageIcon(getClass().getResource("/org/Toty/Administrator/View/images/delete.png")));
+            button2=new JButton(new ImageIcon(getClass().getResource("/Administrator/delete.png")));
             button2.setOpaque(true);
             button2.addActionListener(new ActionListener(){
                 public void actionPerformed( ActionEvent e ) {

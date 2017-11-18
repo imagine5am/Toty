@@ -23,6 +23,7 @@ public class CreateDB {
             stmt.executeUpdate(new String("create database totyadmin;"));
             stmt.executeUpdate(new String("create database toty;"));
             stmt.executeUpdate(new String("create database totyusers;"));
+            stmt.executeUpdate(new String("create database totykeys;"));    //********Review This********
             System.out.println("Databases Created Successfully");
         }
         catch(SQLException e){

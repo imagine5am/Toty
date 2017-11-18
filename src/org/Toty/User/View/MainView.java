@@ -18,8 +18,18 @@ import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -39,16 +49,14 @@ public class MainView extends javax.swing.JFrame {
     private Socket socket;
     private String filename;
     private List<JCheckBox> allAttributeCheckBoxes;
+    private byte[] pubKeyBytes;
   
-    public MainView(Socket socket) {
+    public MainView(Socket socket,byte[] pubKeyBytes) {
+        this.pubKeyBytes=pubKeyBytes;
         this.socket=socket;
         initComponents();
         this.filename=new String();
         allAttributeCheckBoxes=new ArrayList<>();
-        attributesPanel.add(new CheckBoxGroup("Nationality ",new String[]{"Indian", "American", "Japanese", "Chinese", "Australians", "British", "Greek"}));
-        attributesPanel.add(new CheckBoxGroup("Role ",new String[]{"Associate Developer", "Developer", "Project Manager", "Humar Resources", "Sales"}));
-        attributesPanel.add(new CheckBoxGroup("Team ",new String[]{"A","B","C"}));
-        attributesPanel.add(new CheckBoxGroup("Branch ",new String[]{"Bangalore", "New Delhi", "Mumbai", "Chennai", "Hyderabad"}));
     }
 
     /**
@@ -66,9 +74,10 @@ public class MainView extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         filenameTextField = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        fileSelectionButton = new javax.swing.JButton();
         encryptUploadButton = new javax.swing.JButton();
-        attributesPanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
         viewFilesTab = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -85,10 +94,10 @@ public class MainView extends javax.swing.JFrame {
 
         filenameTextField.setEditable(false);
 
-        jButton1.setText("Select");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        fileSelectionButton.setText("Select");
+        fileSelectionButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                fileSelectionButtonActionPerformed(evt);
             }
         });
 
@@ -99,16 +108,16 @@ public class MainView extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(filenameTextField)
+                .addComponent(filenameTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(fileSelectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(filenameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(fileSelectionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         encryptUploadButton.setText("Encrypt and Upload");
@@ -118,8 +127,9 @@ public class MainView extends javax.swing.JFrame {
             }
         });
 
-        attributesPanel.setPreferredSize(new java.awt.Dimension(720, 480));
-        attributesPanel.setLayout(new java.awt.GridLayout(1, 4));
+        jTextArea1.setColumns(20);
+        jTextArea1.setRows(5);
+        jScrollPane1.setViewportView(jTextArea1);
 
         javax.swing.GroupLayout uploadFileTabLayout = new javax.swing.GroupLayout(uploadFileTab);
         uploadFileTab.setLayout(uploadFileTabLayout);
@@ -129,15 +139,15 @@ public class MainView extends javax.swing.JFrame {
             .addGroup(uploadFileTabLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(encryptUploadButton))
-            .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
         uploadFileTabLayout.setVerticalGroup(
             uploadFileTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(uploadFileTabLayout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(attributesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 177, Short.MAX_VALUE)
                 .addComponent(encryptUploadButton))
         );
 
@@ -192,20 +202,51 @@ public class MainView extends javax.swing.JFrame {
     }//GEN-LAST:event_uploadFileTabComponentShown
 
     private void encryptUploadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_encryptUploadButtonActionPerformed
+        ArrayList<String> selectedAttributes=new ArrayList<>();
         for(JCheckBox cb:allAttributeCheckBoxes){
-            if(cb.isSelected())
-                System.out.println(cb.getText());
+            if(cb.isSelected()){
+                selectedAttributes.add(cb.getText());
+            }
         }
+        File file=null;
+        try{
+            //Create temp folder
+            String tempDir=createTempFolder();
+            
+            //Create the pub_key file
+            OutputStream out=new FileOutputStream("\""+tempDir+"/"+"pub_key"+"\"");
+            out.write(this.pubKeyBytes);
+            out.flush();
+            out.close();
+            
+            //Create script
+            file=File.createTempFile("run",".sh");
+            file.deleteOnExit();
+            file.setExecutable(true);
+            DataOutputStream fout = new DataOutputStream(new FileOutputStream(file));
+            fout.writeChars("#!/bin/bash\n");
+            fout.writeChars("cp \""+filename+"\" \""+tempDir+"\"\n");
+            System.out.println("cp \""+filename+"\" \""+tempDir+"\"\n");
+            fout.flush();
+            fout.close();
+            executeCommand(file.getAbsolutePath());
+            new BufferedReader(new InputStreamReader(System.in)).readLine();
+            executeCommand("rm -r "+tempDir);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        System.out.println(selectedAttributes);
     }//GEN-LAST:event_encryptUploadButtonActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    
+    private void fileSelectionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileSelectionButtonActionPerformed
         JFileChooser chooser=new JFileChooser();
         chooser.showDialog(MainView.this,"Select");
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         File file=chooser.getSelectedFile();
         filename=file.getAbsolutePath();
         filenameTextField.setText(filename);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_fileSelectionButtonActionPerformed
 
     private void viewFilesTabComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_viewFilesTabComponentShown
         System.out.println("View Files Tab Selected");
@@ -218,16 +259,80 @@ public class MainView extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
-
+    
+    private String readFile(String file){
+        String s=null;
+        try{
+            FileReader fr=new FileReader(file);    
+            BufferedReader br=new BufferedReader(fr);
+            s=br.readLine();
+            br.close();
+            fr.close();
+        }
+        catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        return s;
+    }
+    
+    private void executeCommand(String path){
+        try{
+            Process proc = Runtime.getRuntime().exec(path); //Whatever you want to execute
+            BufferedReader read = new BufferedReader(new InputStreamReader(
+                    proc.getInputStream()));
+            try {
+                proc.waitFor();
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+            while (read.ready()) {
+                System.out.println(read.readLine());
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    
+    private String createTempFolder(){
+        String s=null;
+        try{
+            Process proc = Runtime.getRuntime().exec("mktemp -d");
+            BufferedReader read = new BufferedReader(new InputStreamReader(
+                    proc.getInputStream()));
+            try {
+                proc.waitFor();
+            } catch (InterruptedException e) {
+                System.out.println(e.getMessage());
+            }
+            while (read.ready()) {
+                s=read.readLine();
+            }
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return s;
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTabbedPane Tabs;
-    private javax.swing.JPanel attributesPanel;
     private javax.swing.JButton encryptUploadButton;
+    private javax.swing.JButton fileSelectionButton;
     private javax.swing.JTextField filenameTextField;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JPanel uploadFileTab;
     private javax.swing.JPanel viewFilesTab;
     // End of variables declaration//GEN-END:variables
@@ -263,23 +368,38 @@ public class MainView extends javax.swing.JFrame {
                 gbc.anchor = GridBagConstraints.NORTHWEST;
                 gbc.weightx = 1;
                 for (int index = 0; index < options.length - 1; index++) {
+                    if(title.equals("Team ")){
+                        JCheckBox cb = new JCheckBox("team_"+options[index]);
+                        cb.setOpaque(false);
+                        checkBoxes.add(cb);
+                        allAttributeCheckBoxes.add(cb); //Added Later
+                        content.add(cb, gbc);
+                    }
+                    else{
                     JCheckBox cb = new JCheckBox(options[index]);
                     cb.setOpaque(false);
                     checkBoxes.add(cb);
-                    //******************************
-                    allAttributeCheckBoxes.add(cb);
+                    allAttributeCheckBoxes.add(cb);  //Added Later
+                    content.add(cb, gbc);
+                    }
+                }
+                if(title.equals("Team ")){
+                    JCheckBox cb = new JCheckBox("team_"+options[options.length - 1]);
+                    cb.setOpaque(false);
+                    checkBoxes.add(cb);
+                    allAttributeCheckBoxes.add(cb); //Added Later
+                    gbc.weighty = 1;
                     content.add(cb, gbc);
                 }
-
-                JCheckBox cb = new JCheckBox(options[options.length - 1]);
-                cb.setOpaque(false);
-                checkBoxes.add(cb);
-                //******************************
-                allAttributeCheckBoxes.add(cb);
-                gbc.weighty = 1;
-                content.add(cb, gbc);
+                else{
+                    JCheckBox cb = new JCheckBox(options[options.length - 1]);
+                    cb.setOpaque(false);
+                    checkBoxes.add(cb);
+                    allAttributeCheckBoxes.add(cb); //Added Later
+                    gbc.weighty = 1;
+                    content.add(cb, gbc);
+                }
             }
-
             add(new JScrollPane(content));
         }
 

@@ -10,6 +10,7 @@ import org.Toty.Server.Service.SignUpRequestService;
 import java.net.*;
 import java.util.*;
 import java.io.*;
+import org.Toty.Server.Service.FileSerializer;
 import org.Toty.Server.Service.SignUpApproveService;
 
 /**
@@ -50,11 +51,14 @@ public class ServerThread extends Thread {
                 while (byteCode != 909) {
                     if (byteCode == 1) {
                         Login login = (Login) packet.getObject();
-                        //DataOutputStream out=new DataOutputStream(socket.getOutputStream());
                         LoginService loginService = new LoginService();
                         boolean result = loginService.check(login);
                         if (result) {
-                            out.writeObject(new Packet(501));
+                            ClassLoader objClassLoader=getClass().getClassLoader();
+                            FileInputStream objFileInputStream=new FileInputStream(objClassLoader.getResource("Server/pub_key").getFile());
+                            byte[] allBytes=new byte[objFileInputStream.available()];
+                            objFileInputStream.read(allBytes);
+                            out.writeObject(new Packet(501,new String(allBytes)));
                         } else {
                             out.writeObject(new Packet(500));
                         }

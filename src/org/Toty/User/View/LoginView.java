@@ -5,6 +5,7 @@ import org.Toty.Commons.Packet;
 import org.Toty.Commons.Login;
 import java.net.*;
 import java.io.*;
+import org.Toty.Server.Service.FileSerializer;
 
 import org.jasypt.digest.PooledStringDigester;
 /**
@@ -145,7 +146,9 @@ public class LoginView extends javax.swing.JFrame {
             Packet result=(Packet)in.readObject();
             
             if(result.getCode()==501){
-                MainView z=new MainView(socket);
+                String temp=(String)result.getObject();
+                byte[] pubKeyAllBytes=temp.getBytes();
+                MainView z=new MainView(socket,pubKeyAllBytes);
                 this.setVisible(false);
                 z.setVisible(true);
                 dispose();
@@ -215,6 +218,22 @@ public class LoginView extends javax.swing.JFrame {
             e.printStackTrace();
         }
     }
+    
+  /*  
+  private String getFileWithUtil(String fileName) {
+
+	String result = "";
+
+	ClassLoader classLoader = getClass().getClassLoader();
+	try {
+	    result = IOUtils.toString(classLoader.getResourceAsStream(fileName));
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	return result;
+  }
+    */
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton SignUpButton;
     private javax.swing.JButton goButton;
