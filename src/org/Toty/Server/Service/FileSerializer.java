@@ -3,7 +3,9 @@ package org.Toty.Server.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 
 /**
@@ -24,43 +26,126 @@ public class FileSerializer {
             return is.readObject();
         }
         */
-    public static byte[] serialize(Object obj) throws IOException {
-        byte[] bytes = null;
-        ByteArrayOutputStream bos = null;
-        ObjectOutputStream oos = null;
+    public static byte[] serialize(Object yourObject) throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutput out = null;
+        byte[] yourBytes;
         try {
-            bos = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(bos);
-            oos.writeObject(obj);
-            oos.flush();
-            bytes = bos.toByteArray();
+          out = new ObjectOutputStream(bos);   
+          out.writeObject(yourObject);
+          out.flush();
+          yourBytes = bos.toByteArray();
+          //...
         } finally {
-            if (oos != null) {
-                oos.close();
-            }
-            if (bos != null) {
-                bos.close();
-            }
+          try {
+            bos.close();
+          } catch (IOException ex) {
+            // ignore close exception
+          }
         }
-        return bytes;
+        return yourBytes;
     }
 
-    public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
-        Object obj = null;
-        ByteArrayInputStream bis = null;
-        ObjectInputStream ois = null;
+    public static Object deserialize(byte[] bytes) {
+        Object o = null;
+        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        ObjectInput in = null;
         try {
-            bis = new ByteArrayInputStream(bytes);
-            ois = new ObjectInputStream(bis);
-            obj = ois.readObject();
-        } finally {
-            if (bis != null) {
-                bis.close();
-            }
-            if (ois != null) {
-                ois.close();
-            }
+          in = new ObjectInputStream(bis);
+          o = in.readObject(); 
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
         }
-        return obj;
+        finally {
+          try {
+            if (in != null) {
+              in.close();
+            }
+          } catch (IOException ex) {
+            ex.printStackTrace();
+          }
+          
+        }
+        return o;
     }
+    
+    public static byte[] toByteArray (Object obj){
+      byte[] bytes = null;
+      ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      try {
+        ObjectOutputStream oos = new ObjectOutputStream(bos); 
+        oos.writeObject(obj);
+        oos.flush(); 
+        oos.close(); 
+        bos.close();
+        bytes = bos.toByteArray ();
+      }
+      catch (IOException ex) {
+        //TODO: Handle the exception
+      }
+      return bytes;
+    }
+
+    public static Object toObject (byte[] bytes){
+      Object obj = null;
+      try {
+        ByteArrayInputStream bis = new ByteArrayInputStream (bytes);
+        ObjectInputStream ois = new ObjectInputStream (bis);
+        obj = ois.readObject();
+      }
+      catch (IOException ex) {
+        //TODO: Handle the exception
+      }
+      catch (ClassNotFoundException ex) {
+        //TODO: Handle the exception
+      }
+      return obj;
+    }
+
+    /*
+    // Convert an object to a byte array
+
+private byte[] ObjectToByteArray(Object obj)
+
+{
+
+    if(obj == null)
+
+        return null;
+
+    BinaryFormatter bf = new BinaryFormatter();
+
+    MemoryStream ms = new MemoryStream();
+
+    bf.Serialize(ms, obj);
+
+    return ms.ToArray();
+
 }
+
+// Convert a byte array to an Object
+
+private Object ByteArrayToObject(byte[] arrBytes)
+
+{
+
+    MemoryStream memStream = new MemoryStream();
+
+    BinaryFormatter binForm = new BinaryFormatter();
+
+    memStream.Write(arrBytes, 0, arrBytes.Length);
+
+    memStream.Seek(0, SeekOrigin.Begin);
+
+    Object obj = (Object) binForm.Deserialize(memStream);
+
+    return obj;
+
+
+}
+*/
+    
+}
+    

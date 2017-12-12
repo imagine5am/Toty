@@ -5,8 +5,8 @@
         <group>
             <file>file:/home/imagine5am/NetBeansProjects/Toty/src/org/Toty/User/View/LoginView.java</file>
             <file>file:/home/imagine5am/NetBeansProjects/Toty/src/org/Toty/Server/ServerThread.java</file>
-            <file>file:/home/imagine5am/NetBeansProjects/Toty/src/org/Toty/Server/Service/FileSerializer.java</file>
-            <file>file:/home/imagine5am/NetBeansProjects/Toty/src/org/Toty/User/View/Try.java</file>
+            <file>file:/home/imagine5am/NetBeansProjects/Toty/src/org/Toty/Server/Server.java</file>
+            <file>file:/home/imagine5am/NetBeansProjects/Toty/src/org/Toty/Administrator/View/MainView.java</file>
             <file>file:/home/imagine5am/NetBeansProjects/Toty/src/org/Toty/User/View/MainView.java</file>
         </group>
     </open-files>

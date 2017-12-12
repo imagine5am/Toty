@@ -43,6 +43,9 @@ Code    Object
 4       admin add
 5       user request to added rejected
 6       user request to to added to login
+7       user sends encrypted file
+8       user request a list of all encrypted files
+9       user requests a particular file
 
 -----Reply------
 100     Admin Login Failed
@@ -55,6 +58,8 @@ Code    Object
 503     user request added
 504     user request to added rejected
 505     user request to to added to login
+506     user gets a list of all files
+509     user gets the requested file
 
 ----Failure Messages----
 404     Login Failed    

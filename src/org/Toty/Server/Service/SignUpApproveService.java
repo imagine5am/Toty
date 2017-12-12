@@ -2,6 +2,7 @@ package org.Toty.Server.Service;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.Statement;
 import org.Toty.Commons.Login;
 import org.Toty.Commons.User;
@@ -50,5 +51,23 @@ public class SignUpApproveService {
              e.printStackTrace();
         }
         return false;
+    }
+     
+     public User getUser(String username){
+        User user=new User(username); 
+         try{
+              Statement statement=connection.createStatement();
+              //select * from username;
+              ResultSet rs=statement.executeQuery("select * from "+username);
+              rs.next();
+              user.addAttribute("nationality",rs.getString("nationality"));
+              user.addAttribute("role",rs.getString("role"));
+              user.addAttribute("team",rs.getString("team"));
+              user.addAttribute("branch",rs.getString("branch"));
+              rs.close();
+         }catch(Exception e){
+             e.printStackTrace();
+         }
+         return user;
     }
 }

@@ -1,10 +1,12 @@
 package org.Toty.User.View;
 
+import java.awt.Toolkit;
 import org.Toty.Commons.Encryptor;
 import org.Toty.Commons.Packet;
 import org.Toty.Commons.Login;
 import java.net.*;
 import java.io.*;
+import org.Toty.Commons.User;
 import org.Toty.Server.Service.FileSerializer;
 
 import org.jasypt.digest.PooledStringDigester;
@@ -17,7 +19,9 @@ public class LoginView extends javax.swing.JFrame {
     private Socket socket;
     
     public LoginView() {
+        super.setTitle("CPABE Login");
         initComponents();
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/User/userIcon.png")));
         try{
             this.socket=new Socket("localhost",1234);
         }
@@ -47,7 +51,7 @@ public class LoginView extends javax.swing.JFrame {
         SignUpButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Login");
+        setTitle("CPABE Login");
 
         jLabel1.setFont(new java.awt.Font("TlwgMono", 1, 18)); // NOI18N
         jLabel1.setText("Login");
@@ -146,9 +150,8 @@ public class LoginView extends javax.swing.JFrame {
             Packet result=(Packet)in.readObject();
             
             if(result.getCode()==501){
-                String temp=(String)result.getObject();
-                byte[] pubKeyAllBytes=temp.getBytes();
-                MainView z=new MainView(socket,pubKeyAllBytes);
+                User user=(User)result.getObject();
+                MainView z=new MainView(socket,user,out,in);
                 this.setVisible(false);
                 z.setVisible(true);
                 dispose();
@@ -157,8 +160,6 @@ public class LoginView extends javax.swing.JFrame {
                 notifyLabel.setText("Wrong Credentials");
                 passwordTextField.setText("");
             }
-            out.close();
-            in.close();
         }
         catch(Exception e){
             e.printStackTrace();
@@ -210,13 +211,15 @@ public class LoginView extends javax.swing.JFrame {
         });
     }
     public void finalize(){
+        /*
         try{
-            socket.close();
+            //socket.close();
             System.out.println("Socket Closed\n");
         }
         catch(IOException e){
             e.printStackTrace();
         }
+        */
     }
     
   /*  
