@@ -353,7 +353,9 @@ public class MainView extends javax.swing.JFrame {
                     e.printStackTrace();
                 }
             }
-            else System.out.println(enc_output);
+            else{
+                JOptionPane.showMessageDialog(null,"File Encryption Unsuccessful.\nERROR: "+enc_output);
+            } //System.out.println(enc_output);
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -622,8 +624,11 @@ public class MainView extends javax.swing.JFrame {
                             result.trim();
                             if(result.equals("")){
                                 System.out.println("File Successfully Decrypted to Desktop");
+                                JOptionPane.showMessageDialog(null,"File Successfully Decrypted to Desktop");
                             }else{
                                 System.out.println("Your Attributes Do Not Satisfy the Required Policy");
+                                JOptionPane.showMessageDialog(null,"Your Attributes Do Not Satisfy the Required Policy");
+                                newFile.delete();
                             }
                         }
                     }catch(Exception exp){
