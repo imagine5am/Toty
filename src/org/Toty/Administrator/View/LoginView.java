@@ -129,12 +129,11 @@ public class LoginView extends javax.swing.JFrame {
             System.out.println("Username: "+username);
             System.out.println("Password: "+password);
             Login login=new Login(username,password);
-            int b=3;
-            Packet packet=new Packet(b,login);
+            Packet packet=new Packet(3,login);
             out.writeObject(packet);
             Packet p=(Packet)in.readObject();
             if(p.getCode()==101){
-                MainView z=new MainView(socket,in,out,new String(username),(ArrayList<User>)p.getObject());
+                MainView z=new MainView(socket,in,out,new String(username));
                 this.setVisible(false);
                 z.setVisible(true);
                 dispose();

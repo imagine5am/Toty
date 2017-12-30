@@ -78,9 +78,7 @@ public class ServerThread extends Thread {
                     System.out.println("Username: " + login.getUsername() + " Password: " + login.getPassword());
                     AdminLoginService loginService = new AdminLoginService();
                     if (loginService.check(login)) {
-                        SignUpRequestService service = new SignUpRequestService();
-                        ArrayList<User> allUsers = (ArrayList<User>) service.getAllRequests();
-                        out.writeObject(new Packet(101, (Object) allUsers));
+                        out.writeObject(new Packet(101));
                     } else {
                         out.writeObject(new Packet(100));
                     }
@@ -107,6 +105,7 @@ public class ServerThread extends Thread {
                     SignUpApproveService approveService = new SignUpApproveService();
                     boolean result = approveService.approveUser(user);
                     out.writeObject(new Packet(505, new Boolean(result)));
+                    out.flush();
                 } else if(byteCode == 7){  //user sends the encrypted file, get encrypted file
                     EncryptedFile encFile=(EncryptedFile)packet.getObject();
                     File newFile=new File(this.fileStorageLocation,encFile.getFilename());
@@ -129,6 +128,11 @@ public class ServerThread extends Thread {
                     objFileInputStream.read(allBytes);
                     objFileInputStream.close();
                     out.writeObject(new Packet(509,new EncryptedFile(filename,allBytes)));
+                    out.flush();
+                } else if(byteCode == 104){  //admin gets list of all the sign up requests
+                    SignUpRequestService service = new SignUpRequestService();
+                    ArrayList<User> allUsers = (ArrayList<User>) service.getAllRequests();
+                    out.writeObject(new Packet(104, (Object) allUsers));
                     out.flush();
                 }
                 packet = (Packet) in.readObject();

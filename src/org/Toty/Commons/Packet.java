@@ -46,12 +46,14 @@ Code    Object
 7       user sends encrypted file
 8       user request a list of all encrypted files
 9       user requests a particular file
+10      admin gets list of all the sign up requests
 
 -----Reply------
 100     Admin Login Failed
-101     Admin Login correct + All Requests Reply
+101     Admin Login correct
 102     admin added
 103     admin not added
+104     send all user requests to admin
 500     user login failed
 501     user login correct
 502     user request not added

@@ -38,21 +38,43 @@ public class MainView extends javax.swing.JFrame {
     private DefaultTableModel table;
     private String adminname;
     
-    public MainView(Socket socket,ObjectInputStream in,ObjectOutputStream out,String adminname,ArrayList<User> allUsers) {
-        this.allUsers=allUsers;
-        this.socket=socket;
-        initComponents();
-        usernameLabel.setText(this.adminname=new String(adminname));
+    public MainView(Socket socket,ObjectInputStream in,ObjectOutputStream out,String adminname) {
         this.out=out;
         this.in=in;
+        this.socket=socket;
+        initComponents();
+        //set adminname label
+        usernameLabel.setText(this.adminname=new String(adminname));
+        //set user table actions
+        usersTable.getColumn("Actions").setCellRenderer(new PanelRenderer());
+        usersTable.getColumn("Actions").setCellEditor(new PanelEditor(new JCheckBox()));
         table=(DefaultTableModel)usersTable.getModel();
+        setUserRequestsTable();
+    }
+    
+    public void setUserRequestsTable(){
+        this.allUsers=getAllUsers();
+        while(table.getRowCount()>0){
+            table.removeRow(0);
+        }
         for(User user:allUsers){
             Object[] tempUserString={user.getUsername(),user.getAttribute("nationality"),
                 user.getAttribute("role"),user.getAttribute("team"),user.getAttribute("branch"),null};
             table.addRow(tempUserString);
         }
-        usersTable.getColumn("Actions").setCellRenderer(new PanelRenderer());
-        usersTable.getColumn("Actions").setCellEditor(new PanelEditor(new JCheckBox()));
+    }
+    
+    public ArrayList<User> getAllUsers(){
+        try{
+            out.writeObject(new Packet(104));
+            Packet packet=(Packet)in.readObject();
+            return (ArrayList<User>)packet.getObject();
+        }catch(IOException e){
+            e.printStackTrace();
+        }catch(ClassNotFoundException e){
+            e.printStackTrace();
+        }
+        return new ArrayList<User>();
     }
 
     /**
@@ -237,25 +259,36 @@ public class MainView extends javax.swing.JFrame {
         protected int row,column;
         public PanelEditor(JCheckBox checkBox){
             super(checkBox);
-            panel=new JPanel(new FlowLayout(FlowLayout.CENTER,5,0));
+            panel=new JPanel(new FlowLayout(FlowLayout.CENTER,0,0));
             button1=new JButton(new ImageIcon(getClass().getResource("/Administrator/check.png")));
             button1.setOpaque(true);
-            button1.setActionCommand("Action 1");
+            //button1.setActionCommand("Action 1");
+            button2=new JButton(new ImageIcon(getClass().getResource("/Administrator/delete.png")));
+            button2.setOpaque(true);
+            //button2.setActionCommand("Action 2");
+            panel.add( button1 );
+            panel.add( button2 );
             button1.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent e){
-                    fireEditingStopped();
-                    System.out.println("Checked Row: " + row + " Column: " + column);
-                    Packet requestPacket=new Packet(6,allUsers.get(row));//user request to to added to login
+                    //fireEditingStopped();
+                    //System.out.println("Checked Row: " + row + " Column: " + column);
+                    System.out.println("Button 1 pressed");
+                    Packet requestPacket=new Packet(6,allUsers.get(row));//user request to added to login
                     try {
                         out.writeObject(requestPacket);
                         out.flush();
                         Packet responsePacket = (Packet) in.readObject();
+                        /*
                         if (responsePacket.getCode() == 505) {
                             if ((Boolean) responsePacket.getObject()) {
                                 allUsers.remove(row);
                                 table.removeRow(row);
                             }
                         }
+                        System.out.println("Button 1 press completed");
+                        */
+                        System.out.println("Button 1 press completed");
+                        setUserRequestsTable();
                     } catch (IOException exception) {
                         exception.printStackTrace();
                     } catch (ClassNotFoundException exception){
@@ -263,22 +296,25 @@ public class MainView extends javax.swing.JFrame {
                     }
                 }
             });
-            button2=new JButton(new ImageIcon(getClass().getResource("/Administrator/delete.png")));
-            button2.setOpaque(true);
             button2.addActionListener(new ActionListener(){
                 public void actionPerformed( ActionEvent e ) {
-                    fireEditingStopped();
+                    //fireEditingStopped();
+                    System.out.println("Button 2 pressed");
                     Packet requestPacket=new Packet(5,allUsers.get(row).getUsername());
                     try{
                         out.writeObject(requestPacket);
                         out.flush();
                         Packet responsePacket=(Packet)in.readObject();
+                        /*
                         if(responsePacket.getCode()==504){
                             if((Boolean)responsePacket.getObject()){
                                 allUsers.remove(row);
                                 table.removeRow(row);
                             }
                         }
+                        */
+                        System.out.println("Button 2 press completed");
+                        setUserRequestsTable();
                     }catch(IOException exception){
                         exception.printStackTrace();
                     }catch(ClassNotFoundException exception2){
@@ -286,22 +322,28 @@ public class MainView extends javax.swing.JFrame {
                     }
                 }
             });
-            panel.add( button1 );
-            panel.add( button2 );
         }
         
         @Override
         public Component getTableCellEditorComponent(JTable jTable, Object value, boolean isSelected, int row, int column){
+            /*
             if(isSelected){
                 button1.setForeground(jTable.getSelectionForeground());
                 button1.setBackground(jTable.getSelectionBackground());
+                button2.setForeground(jTable.getSelectionForeground());
+                button2.setBackground(jTable.getSelectionBackground());
             }
             else{
                 button1.setForeground(jTable.getForeground());
                 button1.setBackground(jTable.getBackground());
+                button2.setForeground(jTable.getForeground());
+                button2.setBackground(jTable.getBackground());
             }
+            */
             this.row=row;
             this.column=column;
+            System.out.println("getTableCellEditoComponent: "+row+" "+column);
+            //System.out.println(allUsers);
             return panel;
         }
     }
